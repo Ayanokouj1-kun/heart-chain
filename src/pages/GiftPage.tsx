@@ -5,8 +5,10 @@ import { Heart, ArrowLeft } from "lucide-react";
 import GiftBox from "@/components/GiftBox";
 import RevealedLetter from "@/components/RevealedLetter";
 import Confetti from "@/components/Confetti";
+import MusicToggle from "@/components/MusicToggle";
 import { Button } from "@/components/ui/button";
 import { decodeLetter, LetterData } from "@/lib/letterEncoder";
+import { useUnwrapSound, useBackgroundMusic } from "@/hooks/useAudio";
 
 const GiftPage = () => {
   const { encoded } = useParams<{ encoded: string }>();
@@ -15,6 +17,9 @@ const GiftPage = () => {
   const [isUnwrapping, setIsUnwrapping] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [error, setError] = useState(false);
+  
+  const unwrapSound = useUnwrapSound();
+  const backgroundMusic = useBackgroundMusic();
 
   useEffect(() => {
     if (encoded) {
@@ -38,6 +43,9 @@ const GiftPage = () => {
 
     setIsUnwrapping(true);
     setShowConfetti(true);
+    
+    // Play unwrap sound
+    unwrapSound.play();
 
     // Save unwrap status to localStorage
     const storageKey = `heartchain_${encoded}`;
@@ -123,9 +131,9 @@ const GiftPage = () => {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 py-6">
+      <header className="relative z-10 py-6 px-4">
         <motion.div
-          className="text-center"
+          className="flex items-center justify-between max-w-4xl mx-auto"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -133,6 +141,13 @@ const GiftPage = () => {
             <Heart className="w-6 h-6 text-primary" fill="currentColor" />
             <span className="font-display text-2xl text-foreground">HeartChain</span>
           </Link>
+          <MusicToggle
+            isPlaying={backgroundMusic.isPlaying}
+            isLoading={backgroundMusic.isLoading}
+            volume={backgroundMusic.volume}
+            onToggle={backgroundMusic.toggle}
+            onVolumeChange={backgroundMusic.setVolume}
+          />
         </motion.div>
       </header>
 
