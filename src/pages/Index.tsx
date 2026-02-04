@@ -4,17 +4,24 @@ import { Heart } from "lucide-react";
 import LetterForm from "@/components/LetterForm";
 import ShareLink from "@/components/ShareLink";
 import { generateShareLink, LetterData } from "@/lib/letterEncoder";
+import { shortenUrl } from "@/lib/urlShortener";
 
-type Step = "write" | "share";
+type Step = "write" | "share" | "shortening";
 
 const Index = () => {
   const [step, setStep] = useState<Step>("write");
   const [shareLink, setShareLink] = useState("");
 
-  const handleSubmit = (data: { to: string; from: string; message: string }) => {
+  const handleSubmit = async (data: { to: string; from: string; message: string }) => {
     const letterData: LetterData = { ...data, unwrapped: false };
     const link = generateShareLink(letterData);
-    setShareLink(link);
+    
+    // Show loading state while shortening
+    setStep("shortening");
+    
+    // Shorten the URL
+    const shortLink = await shortenUrl(link);
+    setShareLink(shortLink);
     setStep("share");
   };
 
@@ -87,6 +94,22 @@ const Index = () => {
           transition={{ duration: 0.3 }}
         >
           {step === "write" && <LetterForm onSubmit={handleSubmit} />}
+          {step === "shortening" && (
+            <motion.div
+              className="flex flex-col items-center justify-center py-16"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <motion.div
+                className="text-primary mb-4"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                <Heart className="w-12 h-12" fill="currentColor" />
+              </motion.div>
+              <p className="text-muted-foreground font-body">Creating your short link...</p>
+            </motion.div>
+          )}
           {step === "share" && (
             <ShareLink link={shareLink} onCreateAnother={handleCreateAnother} />
           )}
