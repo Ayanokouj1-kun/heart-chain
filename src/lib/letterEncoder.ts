@@ -1,5 +1,6 @@
-// Simple encoding/decoding for letter data in URL
-// Note: For production with "unwrap once" feature, use a database
+// Compressed encoding/decoding for letter data in URL
+// Uses LZString for ~50% shorter URLs
+import LZString from 'lz-string';
 
 export interface LetterData {
   to: string;
@@ -10,13 +11,19 @@ export interface LetterData {
 
 export function encodeLetter(data: LetterData): string {
   const json = JSON.stringify(data);
-  // Use base64 encoding (URL-safe)
-  const encoded = btoa(encodeURIComponent(json));
-  return encoded;
+  // Use LZString's URI-safe compression
+  const compressed = LZString.compressToEncodedURIComponent(json);
+  return compressed;
 }
 
 export function decodeLetter(encoded: string): LetterData | null {
   try {
+    // Try new compressed format first
+    const decompressed = LZString.decompressFromEncodedURIComponent(encoded);
+    if (decompressed) {
+      return JSON.parse(decompressed) as LetterData;
+    }
+    // Fallback to old base64 format for existing links
     const json = decodeURIComponent(atob(encoded));
     return JSON.parse(json) as LetterData;
   } catch {
