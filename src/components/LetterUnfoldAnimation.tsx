@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Sparkles } from "lucide-react";
+import { Heart, Sparkles, Wand2 } from "lucide-react";
 
 interface LetterUnfoldAnimationProps {
     onComplete: () => void;
@@ -7,148 +7,140 @@ interface LetterUnfoldAnimationProps {
 
 const LetterUnfoldAnimation = ({ onComplete }: LetterUnfoldAnimationProps) => {
     return (
-        <div className="relative w-full h-[400px] flex items-center justify-center overflow-visible">
-            {/* Floating hearts around */}
+        <div className="relative w-full h-[450px] flex items-center justify-center overflow-visible select-none pointer-events-none">
+            {/* Magical Aura */}
+            <motion.div
+                className="absolute inset-0 z-0 flex items-center justify-center"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: [0, 0.2, 0], scale: [0.5, 1.5, 2] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeOut" }}
+            >
+                <div className="w-64 h-64 bg-primary/20 rounded-full blur-[80px]" />
+            </motion.div>
+
+            {/* Floating Magic Elements */}
             <AnimatePresence>
-                {[...Array(8)].map((_, i) => (
+                {[...Array(10)].map((_, i) => (
                     <motion.div
                         key={i}
-                        className="absolute"
-                        initial={{ opacity: 0, scale: 0 }}
+                        className="absolute text-primary/40"
+                        initial={{ opacity: 0, scale: 0, y: 0 }}
                         animate={{
                             opacity: [0, 1, 1, 0],
-                            scale: [0, 1, 1, 0],
-                            x: [0, (i % 2 === 0 ? 50 : -50) * Math.random()],
-                            y: [0, -100 - Math.random() * 50],
+                            scale: [0.5, 1, 1, 0.5],
+                            y: [-20, -180],
+                            x: Math.sin(i) * 100,
+                            rotate: i * 45
                         }}
                         transition={{
-                            duration: 2,
-                            delay: 3 + i * 0.2,
-                            ease: "easeOut",
+                            duration: 3 + Math.random() * 2,
+                            repeat: Infinity,
+                            delay: i * 0.5,
+                            ease: "easeOut"
                         }}
-                        style={{
-                            left: `${20 + i * 10}%`,
-                            top: "50%",
-                        }}
+                        style={{ left: "50%", top: "60%" }}
                     >
-                        <Heart className="w-4 h-4 text-primary fill-current" />
+                        {i % 2 === 0 ? <Heart className="w-4 h-4 fill-current" /> : <Sparkles className="w-3 h-3 text-yellow-500/50" />}
                     </motion.div>
                 ))}
             </AnimatePresence>
 
-            {/* Sparkles */}
-            <AnimatePresence>
-                {[...Array(12)].map((_, i) => (
-                    <motion.div
-                        key={`sparkle-${i}`}
-                        className="absolute text-yellow-400"
-                        initial={{ opacity: 0, scale: 0, rotate: 0 }}
-                        animate={{
-                            opacity: [0, 1, 0],
-                            scale: [0, 1.5, 0],
-                            rotate: [0, 180, 360],
-                        }}
-                        transition={{
-                            duration: 1.5,
-                            delay: 4 + i * 0.15,
-                            ease: "easeOut",
-                        }}
-                        style={{
-                            left: `${15 + i * 7}%`,
-                            top: `${30 + (i % 3) * 20}%`,
-                        }}
-                    >
-                        <Sparkles className="w-3 h-3" />
-                    </motion.div>
-                ))}
-            </AnimatePresence>
-
-            {/* The folded letter envelope */}
+            {/* Realistic Unfolding Letter Container */}
             <motion.div
-                className="relative"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5 }}
+                className="relative z-10 w-48 h-20 flex flex-col items-center justify-center"
+                style={{ perspective: "1500px" }}
+                initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
             >
-                {/* Envelope back */}
-                <motion.div
-                    className="absolute inset-0 w-64 h-40 bg-gradient-to-br from-rose-100 to-rose-200 rounded-lg shadow-lg"
-                    initial={{ rotateX: 0 }}
-                    animate={{ rotateX: [0, 0, 0, -180] }}
-                    transition={{ duration: 7, times: [0, 0.3, 0.5, 1] }}
-                    style={{ transformStyle: "preserve-3d", transformOrigin: "center bottom" }}
-                />
+                {/* The Base Layer (Middle section) */}
+                <div className="absolute inset-0 bg-card border border-border/40 rounded shadow-lg overflow-hidden">
+                    {/* Realistic Paper Texture */}
+                    <div className="absolute inset-0 opacity-[0.06] brightness-95"
+                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
 
-                {/* Envelope flap */}
+                    {/* Hint of Handwriting */}
+                    <div className="absolute inset-0 flex flex-col gap-2 p-4 opacity-10">
+                        <div className="h-1 bg-foreground/30 w-3/4 rounded-full" />
+                        <div className="h-1 bg-foreground/20 w-1/2 rounded-full" />
+                    </div>
+                </div>
+
+                {/* Wax Seal - Breaking Animation */}
                 <motion.div
-                    className="absolute top-0 left-0 w-64 h-40"
-                    initial={{ rotateX: 0 }}
-                    animate={{ rotateX: [0, 0, 0, -180] }}
-                    transition={{ duration: 7, times: [0, 0.3, 0.5, 1] }}
-                    style={{ transformStyle: "preserve-3d", transformOrigin: "center top" }}
+                    className="absolute z-50 pointer-events-none"
+                    animate={{
+                        scale: [1, 1, 0],
+                        opacity: [1, 1, 0],
+                        y: [0, 0, 20]
+                    }}
+                    transition={{ duration: 7, times: [0, 0.1, 0.15] }}
                 >
-                    <div className="w-full h-full bg-gradient-to-br from-rose-200 to-rose-300 rounded-t-lg shadow-md relative overflow-hidden">
-                        {/* Heart seal */}
-                        <motion.div
-                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                            initial={{ scale: 1 }}
-                            animate={{ scale: [1, 1, 1, 0] }}
-                            transition={{ duration: 7, times: [0, 0.4, 0.45, 0.5] }}
-                        >
-                            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg">
-                                <Heart className="w-6 h-6 text-white fill-current" />
-                            </div>
-                        </motion.div>
+                    <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg border border-primary-foreground/20">
+                        <Heart className="w-6 h-6 text-white fill-current" />
                     </div>
                 </motion.div>
 
-                {/* Letter paper sliding out */}
+                {/* Side Folds - Opening Outward First */}
                 <motion.div
-                    className="absolute top-0 left-0 w-64 h-80 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-xl border-2 border-amber-200"
-                    initial={{ y: 0, scale: 0.9, opacity: 0 }}
-                    animate={{
-                        y: [0, 0, 0, -100],
-                        scale: [0.9, 0.9, 1, 1.1],
-                        opacity: [0, 1, 1, 1],
-                    }}
-                    transition={{ duration: 7, times: [0, 0.5, 0.7, 1] }}
-                    onAnimationComplete={onComplete}
+                    className="absolute inset-y-0 left-0 w-1/2 bg-card border-l border-border/30 rounded-l-sm origin-right z-40"
+                    animate={{ rotateY: [0, 180, 180], x: [0, 0, 0] }}
+                    transition={{ duration: 7, times: [0, 0.25, 1], ease: "easeInOut" }}
+                    style={{ transformStyle: "preserve-3d" }}
+                />
+                <motion.div
+                    className="absolute inset-y-0 right-0 w-1/2 bg-card border-r border-border/30 rounded-r-sm origin-left z-40"
+                    animate={{ rotateY: [0, -180, -180], x: [0, 0, 0] }}
+                    transition={{ duration: 7, times: [0, 0.25, 1], ease: "easeInOut" }}
+                    style={{ transformStyle: "preserve-3d" }}
+                />
+
+                {/* Top Fold - Opening Upwards */}
+                <motion.div
+                    className="absolute top-0 left-0 right-0 h-full bg-card border-t border-border/30 rounded-t-sm origin-bottom z-30 shadow-sm"
+                    animate={{ rotateX: [0, 0, 180, 180], y: [0, 0, 0, 0] }}
+                    transition={{ duration: 7, times: [0, 0.25, 0.5, 1], ease: "easeInOut" }}
+                    style={{ transformStyle: "preserve-3d" }}
                 >
-                    {/* Vintage paper texture */}
-                    <div
-                        className="absolute inset-0 opacity-[0.08] pointer-events-none rounded-lg"
-                        style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-                        }}
-                    />
+                    <div className="absolute inset-0 bg-card opacity-[0.05]"
+                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
+                </motion.div>
 
-                    {/* Decorative elements on paper */}
-                    <div className="absolute top-4 left-4 text-primary/20 text-2xl">✦</div>
-                    <div className="absolute top-4 right-4 text-primary/20 text-2xl">✦</div>
-                    <div className="absolute bottom-4 left-4 text-primary/20 text-2xl">✦</div>
-                    <div className="absolute bottom-4 right-4 text-primary/20 text-2xl">✦</div>
-
-                    {/* Heart in center */}
-                    <motion.div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                        initial={{ scale: 0, rotate: 0 }}
-                        animate={{ scale: [0, 0, 1.2, 1], rotate: [0, 0, 360, 360] }}
-                        transition={{ duration: 7, times: [0, 0.6, 0.85, 1] }}
-                    >
-                        <Heart className="w-16 h-16 text-primary/30 fill-current" />
-                    </motion.div>
+                {/* Bottom Fold - Opening Downwards */}
+                <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-full bg-card border-b border-border/30 rounded-b-sm origin-top z-30 shadow-sm"
+                    animate={{ rotateX: [0, 0, 0, -180], y: [0, 0, 0, 0] }}
+                    transition={{ duration: 7, times: [0, 0.5, 0.75, 1], ease: "easeInOut" }}
+                    onAnimationComplete={onComplete}
+                    style={{ transformStyle: "preserve-3d" }}
+                >
+                    <div className="absolute inset-0 bg-card opacity-[0.05]"
+                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
                 </motion.div>
             </motion.div>
 
-            {/* Cute message */}
+            {/* Floating Magic Wand - Visual Cue */}
             <motion.div
-                className="absolute bottom-8 text-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: [0, 0, 1], y: [20, 20, 0] }}
-                transition={{ duration: 7, times: [0, 0.7, 1] }}
+                className="absolute top-1/4 right-1/4 z-50 text-primary"
+                animate={{
+                    rotate: [0, 15, -15, 0],
+                    y: [-10, 10, -10],
+                    x: [0, 10, -10, 0]
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
             >
-                <p className="font-typewriter text-sm text-muted-foreground">
-                    Opening your letter with love...
+                <Wand2 className="w-6 h-6 drop-shadow-glow" />
+            </motion.div>
+
+            {/* Cute Status Text */}
+            <motion.div
+                className="absolute bottom-4 text-center z-10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 1, 0] }}
+                transition={{ duration: 7, times: [0, 0.2, 0.8, 1] }}
+            >
+                <p className="font-typewriter text-base text-primary/80 animate-pulse italic">
+                    Unfolding a world of love for you...
                 </p>
             </motion.div>
         </div>

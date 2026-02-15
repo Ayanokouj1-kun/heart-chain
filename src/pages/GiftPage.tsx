@@ -53,15 +53,11 @@ const GiftPage = () => {
     const storageKey = `heartchain_${encoded}`;
     localStorage.setItem(storageKey, "true");
 
-    // Impact happens around 6.5s
-    setTimeout(() => {
-      setIsImpacted(true);
-    }, 6500);
-
+    // Letter animation takes about 7 seconds
     setTimeout(() => {
       setIsUnwrapped(true);
       setIsUnwrapping(false);
-    }, 7200);
+    }, 7000);
   };
 
   if (error) {
@@ -151,9 +147,7 @@ const GiftPage = () => {
           <MusicToggle
             isPlaying={backgroundMusic.isPlaying}
             isLoading={backgroundMusic.isLoading}
-            volume={backgroundMusic.volume}
             onToggle={backgroundMusic.toggle}
-            onVolumeChange={backgroundMusic.setVolume}
           />
         </motion.div>
       </header>
@@ -183,19 +177,19 @@ const GiftPage = () => {
               Someone special sent you a love letter ♥
             </motion.p>
 
-            <div className="relative w-full max-w-md h-80 mx-auto flex items-center justify-center">
-              {isUnwrapping && (
+            <div className="relative w-full max-w-md h-[450px] mx-auto flex items-center justify-center">
+              {isUnwrapping ? (
                 <div className="absolute inset-0 z-40 flex items-center justify-center">
                   <LetterUnfoldAnimation onComplete={() => { }} />
                 </div>
+              ) : (
+                <div className="w-64 h-72 mx-auto">
+                  <GiftBox
+                    isUnwrapping={isUnwrapping}
+                    onUnwrap={handleUnwrap}
+                  />
+                </div>
               )}
-              <div className="w-64 h-72 mx-auto">
-                <GiftBox
-                  isUnwrapping={isImpacted}
-                  onUnwrap={handleUnwrap}
-                  className={isUnwrapping && !isImpacted ? "animate-pulse" : ""}
-                />
-              </div>
             </div>
           </motion.div>
         ) : (

@@ -7,115 +7,132 @@ interface PaperFoldAnimationProps {
 }
 
 const PaperFoldAnimation = ({ onComplete }: PaperFoldAnimationProps) => {
-  const [phase, setPhase] = useState<"fold1" | "fold2" | "fold3" | "seal">("fold1");
+  const [phase, setPhase] = useState<"show" | "fold-top" | "fold-bottom" | "fold-sides" | "seal">("show");
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase("fold2"), 1200),
-      setTimeout(() => setPhase("fold3"), 2400),
-      setTimeout(() => setPhase("seal"), 3600),
+      setTimeout(() => setPhase("fold-top"), 800),
+      setTimeout(() => setPhase("fold-bottom"), 1800),
+      setTimeout(() => setPhase("fold-sides"), 2800),
+      setTimeout(() => setPhase("seal"), 3800),
       setTimeout(() => onComplete(), 5000),
     ];
     return () => timers.forEach(clearTimeout);
   }, [onComplete]);
 
   const phaseLabel = {
-    fold1: "Folding your letter...",
-    fold2: "Folding once more...",
-    fold3: "Almost there...",
-    seal: "Sealing with love ♥",
+    show: "Preparing your letter...",
+    "fold-top": "Folding your heart into every corner...",
+    "fold-bottom": "Keeping your secrets safe...",
+    "fold-sides": "Wrapping it with care...",
+    seal: "Sealing with a kiss of love ♥",
   };
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center py-16"
+      className="flex flex-col items-center justify-center py-12"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Paper container */}
-      <div className="relative w-48 h-64 mb-8" style={{ perspective: "600px" }}>
-        {/* Back of paper */}
-        <div className="absolute inset-0 bg-card border-2 border-border rounded-sm shadow-card" />
+      <div className="relative w-48 h-64 mb-12" style={{ perspective: "1000px" }}>
+        {/* Base layer (Back of paper) */}
+        <div className="absolute inset-0 bg-card border border-border/40 rounded-sm shadow-sm" />
 
-        {/* Top fold */}
-        <motion.div
-          className="absolute top-0 left-0 right-0 h-1/2 bg-card border-2 border-border rounded-t-sm origin-bottom overflow-hidden"
-          animate={{
-            rotateX: phase === "fold1" ? 0 : -180,
+        {/* Paper texture base */}
+        <div
+          className="absolute inset-0 opacity-[0.06] pointer-events-none rounded-sm z-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
           }}
-          transition={{ duration: 1, ease: "easeInOut" }}
-          style={{ transformStyle: "preserve-3d", zIndex: 3 }}
+        />
+
+        {/* Top Fold */}
+        <motion.div
+          className="absolute top-0 left-0 right-0 h-1/3 bg-card border border-border/40 rounded-t-sm origin-bottom z-10"
+          initial={{ rotateX: 0 }}
+          animate={{
+            rotateX: phase !== "show" ? -180 : 0,
+            y: phase !== "show" ? 0 : 0,
+            boxShadow: phase !== "show" ? "0 4px 6px -1px rgb(0 0 0 / 0.1)" : "none"
+          }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+          style={{ transformStyle: "preserve-3d" }}
         >
-          {/* Lines on paper */}
-          <div className="absolute inset-0 p-3 flex flex-col gap-2">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-px bg-border/60 w-full" />
-            ))}
-          </div>
+          {/* Texture on fold back */}
+          <div className="absolute inset-0 bg-card/80 opacity-[0.05]"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
         </motion.div>
 
-        {/* Bottom fold */}
+        {/* Bottom Fold */}
         <motion.div
-          className="absolute bottom-0 left-0 right-0 h-1/2 bg-card border-2 border-border rounded-b-sm origin-top"
+          className="absolute bottom-0 left-0 right-0 h-1/3 bg-card border border-border/40 rounded-b-sm origin-top z-20"
+          initial={{ rotateX: 0 }}
           animate={{
-            rotateX: phase === "fold1" || phase === "fold2" ? 0 : 180,
+            rotateX: (phase === "fold-bottom" || phase === "fold-sides" || phase === "seal") ? 180 : 0,
+            boxShadow: (phase === "fold-bottom" || phase === "fold-sides" || phase === "seal") ? "0 -4px 6px -1px rgb(0 0 0 / 0.1)" : "none"
           }}
-          transition={{ duration: 1, ease: "easeInOut", delay: phase === "fold3" ? 0 : 0 }}
-          style={{ transformStyle: "preserve-3d", zIndex: 2 }}
-        />
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <div className="absolute inset-0 bg-card/80 opacity-[0.05]"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
+        </motion.div>
 
-        {/* Left fold */}
-        <motion.div
-          className="absolute top-0 left-0 w-1/2 h-full bg-card border-2 border-border rounded-l-sm origin-right"
-          animate={{
-            rotateY: phase === "fold1" || phase === "fold2" || phase === "fold3" ? 0 : 90,
-          }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          style={{ transformStyle: "preserve-3d", zIndex: 4 }}
-        />
+        {/* Side Folds (Left and Right folding in) */}
+        <div className="absolute inset-x-0 top-1/3 bottom-1/3 z-30 pointer-events-none overflow-visible">
+          <motion.div
+            className="absolute left-0 top-0 bottom-0 w-1/2 bg-card border border-border/30 rounded-l-sm origin-right shadow-sm"
+            animate={{ rotateY: (phase === "fold-sides" || phase === "seal") ? 179 : 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute right-0 top-0 bottom-0 w-1/2 bg-card border border-border/30 rounded-r-sm origin-left shadow-sm"
+            animate={{ rotateY: (phase === "fold-sides" || phase === "seal") ? -179 : 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          />
+        </div>
 
         {/* Wax seal */}
         <AnimatePresence>
           {phase === "seal" && (
             <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none"
+              initial={{ scale: 3, opacity: 0, rotate: -45 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 100, damping: 12, delay: 0.4 }}
             >
-              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-romantic">
-                <Heart className="w-7 h-7 text-primary-foreground" fill="currentColor" />
+              <div className="relative">
+                <div className="w-14 h-14 rounded-full bg-primary/95 flex items-center justify-center shadow-lg border border-primary-foreground/20">
+                  <Heart className="w-7 h-7 text-white fill-current" />
+                </div>
+                {/* Seal wax drips simplified */}
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-2 bg-primary/90 rounded-full blur-[1px]" />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Status text */}
       <motion.p
         key={phase}
-        className="font-body text-lg text-muted-foreground italic"
-        initial={{ opacity: 0, y: 10 }}
+        className="font-typewriter text-base text-muted-foreground/80 mt-4 text-center px-4"
+        initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.4 }}
       >
         {phaseLabel[phase]}
       </motion.p>
 
-      {/* Progress dots */}
-      <div className="flex gap-2 mt-4">
-        {["fold1", "fold2", "fold3", "seal"].map((p, i) => (
+      <div className="flex gap-1.5 mt-6">
+        {Object.keys(phaseLabel).map((key, i) => (
           <motion.div
-            key={p}
-            className="w-2 h-2 rounded-full"
+            key={key}
+            className="h-1 rounded-full bg-primary"
             animate={{
-              backgroundColor:
-                ["fold1", "fold2", "fold3", "seal"].indexOf(phase) >= i
-                  ? "hsl(350 50% 45%)"
-                  : "hsl(30 30% 78%)",
-              scale: phase === p ? 1.3 : 1,
+              width: phase === key ? 24 : 8,
+              opacity: Object.keys(phaseLabel).indexOf(phase) >= i ? 0.6 : 0.2
             }}
             transition={{ duration: 0.3 }}
           />

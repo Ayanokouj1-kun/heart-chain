@@ -1,8 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 
-// Ed Sheeran - Photograph (Instrumental/Cover from public source)
-// Note: Using a royalty-free romantic instrumental. For the actual song, you'll need proper licensing.
-const ROMANTIC_MUSIC_URL = "https://cdn.pixabay.com/audio/2022/03/10/audio_2c4d748ceb.mp3";
+// Local HeartChain OST
+const ROMANTIC_MUSIC_URL = "/heartchainOST.mp3";
 
 // Create a simple unwrap sound using Web Audio API
 const createUnwrapSound = (audioContext: AudioContext) => {
