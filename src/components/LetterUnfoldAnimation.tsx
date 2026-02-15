@@ -1,148 +1,137 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Sparkles, Wand2 } from "lucide-react";
+import { Heart, Sparkles, Star } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface LetterUnfoldAnimationProps {
     onComplete: () => void;
 }
 
 const LetterUnfoldAnimation = ({ onComplete }: LetterUnfoldAnimationProps) => {
+    const [phase, setPhase] = useState<"peek" | "open" | "reveal">("peek");
+
+    useEffect(() => {
+        const timers = [
+            setTimeout(() => setPhase("open"), 2000), // Peek for 2s
+            setTimeout(() => setPhase("reveal"), 4500), // Fully open at 4.5s
+            setTimeout(() => onComplete(), 7000),     // Complete at 7s
+        ];
+        return () => timers.forEach(clearTimeout);
+    }, [onComplete]);
+
     return (
-        <div className="relative w-full h-[450px] flex items-center justify-center overflow-visible select-none pointer-events-none">
-            {/* Magical Aura */}
+        <div className="relative w-full h-[500px] flex items-center justify-center overflow-visible select-none pointer-events-none perspective-1000">
+
+            {/* Background Glow */}
             <motion.div
-                className="absolute inset-0 z-0 flex items-center justify-center"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: [0, 0.2, 0], scale: [0.5, 1.5, 2] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeOut" }}
+                className="absolute inset-0 z-0 flex items-center justify-center opacity-50"
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                transition={{ duration: 4, repeat: Infinity }}
             >
-                <div className="w-64 h-64 bg-primary/20 rounded-full blur-[80px]" />
+                <div className="w-80 h-80 bg-rose-100/30 rounded-full blur-3xl" />
             </motion.div>
 
-            {/* Floating Magic Elements */}
+            {/* Floating Elements (Sparkles/Hearts) */}
             <AnimatePresence>
-                {[...Array(10)].map((_, i) => (
+                {phase !== "peek" && [...Array(12)].map((_, i) => (
                     <motion.div
                         key={i}
-                        className="absolute text-primary/40"
-                        initial={{ opacity: 0, scale: 0, y: 0 }}
+                        className="absolute z-10"
+                        initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
                         animate={{
-                            opacity: [0, 1, 1, 0],
-                            scale: [0.5, 1, 1, 0.5],
-                            y: [-20, -180],
-                            x: Math.sin(i) * 100,
-                            rotate: i * 45
+                            opacity: [0, 1, 0],
+                            scale: [0.5, 1.5, 0],
+                            y: -100 - Math.random() * 100,
+                            x: (Math.random() - 0.5) * 150,
+                            rotate: Math.random() * 360,
                         }}
-                        transition={{
-                            duration: 3 + Math.random() * 2,
-                            repeat: Infinity,
-                            delay: i * 0.5,
-                            ease: "easeOut"
-                        }}
-                        style={{ left: "50%", top: "60%" }}
+                        transition={{ duration: 3, delay: i * 0.2, ease: "easeOut" }}
+                        style={{ top: "60%", left: "50%" }}
                     >
-                        {i % 2 === 0 ? <Heart className="w-4 h-4 fill-current" /> : <Sparkles className="w-3 h-3 text-yellow-500/50" />}
+                        {i % 3 === 0 ? (
+                            <Heart className="w-5 h-5 text-rose-400 fill-current" />
+                        ) : i % 3 === 1 ? (
+                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        ) : (
+                            <Sparkles className="w-4 h-4 text-amber-300" />
+                        )}
                     </motion.div>
                 ))}
             </AnimatePresence>
 
-            {/* Realistic Unfolding Letter Container */}
-            <motion.div
-                className="relative z-10 w-48 h-20 flex flex-col items-center justify-center"
-                style={{ perspective: "1500px" }}
-                initial={{ scale: 0.8, opacity: 0, y: 50 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-            >
-                {/* The Base Layer (Middle section) */}
-                <div className="absolute inset-0 bg-card border border-border/40 rounded shadow-lg overflow-hidden">
-                    {/* Realistic Paper Texture */}
-                    <div className="absolute inset-0 opacity-[0.06] brightness-95"
-                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
+            {/* Envelope Container */}
+            <div className="relative z-20 w-72 h-48 flex items-end justify-center transform-style-3d">
 
-                    {/* Hint of Handwriting */}
-                    <div className="absolute inset-0 flex flex-col gap-2 p-4 opacity-10">
-                        <div className="h-1 bg-foreground/30 w-3/4 rounded-full" />
-                        <div className="h-1 bg-foreground/20 w-1/2 rounded-full" />
+                {/* Envelope Back */}
+                <div className="absolute inset-0 bg-rose-100 rounded-lg shadow-2xl border border-rose-200" />
+
+                {/* The Letter Inside (Sliding Up) */}
+                <motion.div
+                    className="absolute w-64 h-[350px] bg-white rounded shadow-lg overflow-hidden origin-bottom"
+                    initial={{ y: 20, scale: 0.95, opacity: 0 }}
+                    animate={{
+                        y: phase === "peek" ? -40 : phase === "open" ? -100 : -200, // Peek vs Full slide
+                        scale: phase === "reveal" ? 1 : 0.95,
+                        opacity: 1,
+                        rotateX: phase === "reveal" ? 0 : 5 // Slight tilt inside
+                    }}
+                    transition={{ duration: 2, ease: "easeInOut" }}
+                >
+                    {/* Letter Content Simulation */}
+                    <div className="p-6 space-y-4 opacity-50">
+                        <div className="h-4 bg-gray-100 rounded w-1/3" />
+                        <div className="h-4 bg-gray-100 rounded w-full" />
+                        <div className="h-4 bg-gray-100 rounded w-5/6" />
+                        <div className="h-4 bg-gray-100 rounded w-full" />
+                        <div className="h-20 bg-gray-50 rounded w-full mt-4 border border-dashed border-gray-200" /> {/* Photo placeholder */}
                     </div>
+                    {/* Shiny overlay for magical feel */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/40 to-white/0 opacity-50" />
+                </motion.div>
+
+                {/* Envelope Front (Pocket) */}
+                <div className="absolute bottom-0 w-full h-3/4 bg-rose-200 rounded-b-lg overflow-hidden z-30 shadow-md">
+                    <div className="absolute inset-0 bg-gradient-to-t from-rose-300/20 to-transparent" />
+                    {/* Fold shadow */}
+                    <div className="absolute top-0 w-full h-4 bg-gradient-to-b from-black/5 to-transparent" />
                 </div>
 
-                {/* Wax Seal - Breaking Animation */}
+                {/* Envelope Triangle Flap (Opening) */}
                 <motion.div
-                    className="absolute z-50 pointer-events-none"
+                    className="absolute z-40 top-0 w-full h-1/2 bg-rose-300 origin-top rounded-t-lg shadow-md flex items-center justify-center p-0"
+                    style={{ clipPath: "polygon(0 0, 50% 100%, 100% 0)" }} // Triangle shape
+                    initial={{ rotateX: 0 }}
                     animate={{
-                        scale: [1, 1, 0],
-                        opacity: [1, 1, 0],
-                        y: [0, 0, 20]
+                        rotateX: phase === "peek" ? -30 : -180, // Peek slightly open, then fully open
+                        zIndex: phase === "peek" ? 40 : 10 // Move behind when fully open
                     }}
-                    transition={{ duration: 7, times: [0, 0.1, 0.15] }}
+                    transition={{ duration: 1.5, ease: "easeInOut" }}
                 >
-                    <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg border border-primary-foreground/20">
-                        <Heart className="w-6 h-6 text-white fill-current" />
-                    </div>
+                    {/* Wax Seal on the tip */}
+                    <motion.div
+                        className="mt-8"
+                        animate={{ opacity: phase === "peek" ? 1 : 0 }}
+                    >
+                        <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white/20">
+                            <Heart className="w-6 h-6 text-white fill-current" />
+                        </div>
+                    </motion.div>
                 </motion.div>
 
-                {/* Side Folds - Opening Outward First */}
-                <motion.div
-                    className="absolute inset-y-0 left-0 w-1/2 bg-card border-l border-border/30 rounded-l-sm origin-right z-40"
-                    animate={{ rotateY: [0, 180, 180], x: [0, 0, 0] }}
-                    transition={{ duration: 7, times: [0, 0.25, 1], ease: "easeInOut" }}
-                    style={{ transformStyle: "preserve-3d" }}
-                />
-                <motion.div
-                    className="absolute inset-y-0 right-0 w-1/2 bg-card border-r border-border/30 rounded-r-sm origin-left z-40"
-                    animate={{ rotateY: [0, -180, -180], x: [0, 0, 0] }}
-                    transition={{ duration: 7, times: [0, 0.25, 1], ease: "easeInOut" }}
-                    style={{ transformStyle: "preserve-3d" }}
-                />
+                {/* Front Left/Right Flaps (Visual Detail) */}
+                <div className="absolute bottom-0 left-0 w-1/2 h-3/4 bg-rose-200 z-30 origin-bottom-left skew-y-12 shadow-inner opacity-80 rounded-bl-lg" />
+                <div className="absolute bottom-0 right-0 w-1/2 h-3/4 bg-rose-200 z-30 origin-bottom-right -skew-y-12 shadow-inner opacity-80 rounded-br-lg" />
 
-                {/* Top Fold - Opening Upwards */}
-                <motion.div
-                    className="absolute top-0 left-0 right-0 h-full bg-card border-t border-border/30 rounded-t-sm origin-bottom z-30 shadow-sm"
-                    animate={{ rotateX: [0, 0, 180, 180], y: [0, 0, 0, 0] }}
-                    transition={{ duration: 7, times: [0, 0.25, 0.5, 1], ease: "easeInOut" }}
-                    style={{ transformStyle: "preserve-3d" }}
-                >
-                    <div className="absolute inset-0 bg-card opacity-[0.05]"
-                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
-                </motion.div>
-
-                {/* Bottom Fold - Opening Downwards */}
-                <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-full bg-card border-b border-border/30 rounded-b-sm origin-top z-30 shadow-sm"
-                    animate={{ rotateX: [0, 0, 0, -180], y: [0, 0, 0, 0] }}
-                    transition={{ duration: 7, times: [0, 0.5, 0.75, 1], ease: "easeInOut" }}
-                    onAnimationComplete={onComplete}
-                    style={{ transformStyle: "preserve-3d" }}
-                >
-                    <div className="absolute inset-0 bg-card opacity-[0.05]"
-                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
-                </motion.div>
-            </motion.div>
-
-            {/* Floating Magic Wand - Visual Cue */}
-            <motion.div
-                className="absolute top-1/4 right-1/4 z-50 text-primary"
-                animate={{
-                    rotate: [0, 15, -15, 0],
-                    y: [-10, 10, -10],
-                    x: [0, 10, -10, 0]
-                }}
-                transition={{ duration: 4, repeat: Infinity }}
-            >
-                <Wand2 className="w-6 h-6 drop-shadow-glow" />
-            </motion.div>
+            </div>
 
             {/* Cute Status Text */}
-            <motion.div
-                className="absolute bottom-4 text-center z-10"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 1, 0] }}
-                transition={{ duration: 7, times: [0, 0.2, 0.8, 1] }}
+            <motion.p
+                className="absolute bottom-10 font-handwriting text-xl text-rose-500/80"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
             >
-                <p className="font-typewriter text-base text-primary/80 animate-pulse italic">
-                    Unfolding a world of love for you...
-                </p>
-            </motion.div>
+                {phase === "peek" ? "Wait for it..." : "Here comes the love! ♥"}
+            </motion.p>
+
         </div>
     );
 };

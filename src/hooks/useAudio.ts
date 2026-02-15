@@ -89,25 +89,32 @@ export const useBackgroundMusic = () => {
     }
   }, [volume]);
 
-  const toggle = useCallback(async () => {
+  const play = useCallback(async () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || isPlaying) return;
 
     try {
-      if (isPlaying) {
-        audio.pause();
-        setIsPlaying(false);
-      } else {
-        setIsLoading(true);
-        await audio.play();
-        setIsPlaying(true);
-        setIsLoading(false);
-      }
+      setIsLoading(true);
+      await audio.play();
+      setIsPlaying(true);
+      setIsLoading(false);
     } catch (error) {
       console.log("Music playback failed:", error);
       setIsLoading(false);
     }
   }, [isPlaying]);
+
+  const toggle = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      await play();
+    }
+  }, [isPlaying, play]);
 
   const stop = useCallback(() => {
     const audio = audioRef.current;
@@ -118,5 +125,5 @@ export const useBackgroundMusic = () => {
     }
   }, []);
 
-  return { isPlaying, isLoading, volume, setVolume, toggle, stop };
+  return { isPlaying, isLoading, volume, setVolume, toggle, play, stop };
 };

@@ -1,143 +1,144 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
+import { Heart, Star, Sparkles, Mail } from "lucide-react";
+import { useUnwrapSound } from "@/hooks/useAudio"; // Re-using sound hook for crinkle
 
 interface PaperFoldAnimationProps {
   onComplete: () => void;
 }
 
 const PaperFoldAnimation = ({ onComplete }: PaperFoldAnimationProps) => {
-  const [phase, setPhase] = useState<"show" | "fold-top" | "fold-bottom" | "fold-sides" | "seal">("show");
+  // Phases: folding -> sliding -> sealed
+  const [phase, setPhase] = useState<"folding" | "sliding" | "sealed">("folding");
+  const { play: playCrinkle } = useUnwrapSound();
 
   useEffect(() => {
+    // Play sound initially
+    playCrinkle();
+
     const timers = [
-      setTimeout(() => setPhase("fold-top"), 800),
-      setTimeout(() => setPhase("fold-bottom"), 1800),
-      setTimeout(() => setPhase("fold-sides"), 2800),
-      setTimeout(() => setPhase("seal"), 3800),
-      setTimeout(() => onComplete(), 5000),
+      setTimeout(() => setPhase("sliding"), 3500), // Start sliding into envelope at 3.5s
+      setTimeout(() => playCrinkle(), 3600), // Another sound for sliding
+      setTimeout(() => setPhase("sealed"), 5500),  // Sealed and waiting
+      setTimeout(() => onComplete(), 7000),      // Complete at 7s
     ];
     return () => timers.forEach(clearTimeout);
-  }, [onComplete]);
-
-  const phaseLabel = {
-    show: "Preparing your letter...",
-    "fold-top": "Folding your heart into every corner...",
-    "fold-bottom": "Keeping your secrets safe...",
-    "fold-sides": "Wrapping it with care...",
-    seal: "Sealing with a kiss of love ♥",
-  };
+  }, [onComplete, playCrinkle]);
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center py-12"
+      className="flex flex-col items-center justify-center py-12 relative overflow-visible"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.4 }}
     >
-      <div className="relative w-48 h-64 mb-12" style={{ perspective: "1000px" }}>
-        {/* Base layer (Back of paper) */}
-        <div className="absolute inset-0 bg-card border border-border/40 rounded-sm shadow-sm" />
+      {/* Floating Magic Elements */}
+      <AnimatePresence>
+        {phase === "folding" && [...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-primary/30"
+            initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+            animate={{
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+              x: (Math.random() - 0.5) * 100,
+              y: -50 - Math.random() * 50,
+            }}
+            transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}
+            style={{ top: "40%", left: "50%" }}
+          >
+            {i % 2 === 0 ? <Heart className="w-4 h-4 fill-current" /> : <Star className="w-3 h-3 fill-current" />}
+          </motion.div>
+        ))}
+      </AnimatePresence>
 
-        {/* Paper texture base */}
-        <div
-          className="absolute inset-0 opacity-[0.06] pointer-events-none rounded-sm z-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+      <div className="relative w-64 h-48 flex items-center justify-center" style={{ perspective: "1000px" }}>
+
+        {/* The Envelope (Visible during sliding and sealed) */}
+        <motion.div
+          className="absolute z-20 w-64 h-40 bg-rose-100 border-2 border-rose-200 rounded-lg shadow-xl flex items-end justify-center overflow-hidden"
+          initial={{ y: 100, opacity: 0 }}
+          animate={{
+            y: phase === "folding" ? 100 : 0,
+            opacity: phase === "folding" ? 0 : 1
           }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          {/* Envelope Front Details */}
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-rose-200" style={{ clipPath: "polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%)" }} />
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-rose-300 opacity-50" style={{ clipPath: "polygon(0 0, 50% 80%, 100% 0)" }} />
+        </motion.div>
+
+        {/* The Folding Paper */}
+        <motion.div
+          className="relative z-10 w-48 h-60 bg-white shadow-sm border border-gray-100"
+          animate={
+            phase === "folding" ? {
+              scale: [1, 0.8, 0.4],
+              rotateX: [0, 60, 0],
+              y: [0, 0, 0]
+            } : phase === "sliding" ? {
+              scale: 0.4,
+              y: 80, // Slide down
+              opacity: 1
+            } : {
+              scale: 0.4,
+              y: 150, // Hidden inside
+              opacity: 0
+            }
+          }
+          transition={{ duration: 3, times: [0, 0.5, 1] }}
+        >
+          {/* Paper Texture */}
+          <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')]"></div>
+          {/* Lines */}
+          <div className="w-full h-full p-4 flex flex-col gap-3">
+            <div className="w-3/4 h-2 bg-gray-100 rounded" />
+            <div className="w-full h-2 bg-gray-100 rounded" />
+            <div className="w-5/6 h-2 bg-gray-100 rounded" />
+          </div>
+        </motion.div>
+
+        {/* Envelope Flap (Closing Animation) */}
+        <motion.div
+          className="absolute z-30 top-4 w-64 h-32 bg-rose-200 origin-top rounded-t-lg shadow-sm"
+          style={{ clipPath: "polygon(0 0, 50% 50%, 100% 0)" }}
+          initial={{ rotateX: 180 }}
+          animate={{ rotateX: phase === "sealed" ? 0 : 180 }}
+          transition={{ duration: 0.6, type: "spring" }}
         />
 
-        {/* Top Fold */}
-        <motion.div
-          className="absolute top-0 left-0 right-0 h-1/3 bg-card border border-border/40 rounded-t-sm origin-bottom z-10"
-          initial={{ rotateX: 0 }}
-          animate={{
-            rotateX: phase !== "show" ? -180 : 0,
-            y: phase !== "show" ? 0 : 0,
-            boxShadow: phase !== "show" ? "0 4px 6px -1px rgb(0 0 0 / 0.1)" : "none"
-          }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          {/* Texture on fold back */}
-          <div className="absolute inset-0 bg-card/80 opacity-[0.05]"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
-        </motion.div>
-
-        {/* Bottom Fold */}
-        <motion.div
-          className="absolute bottom-0 left-0 right-0 h-1/3 bg-card border border-border/40 rounded-b-sm origin-top z-20"
-          initial={{ rotateX: 0 }}
-          animate={{
-            rotateX: (phase === "fold-bottom" || phase === "fold-sides" || phase === "seal") ? 180 : 0,
-            boxShadow: (phase === "fold-bottom" || phase === "fold-sides" || phase === "seal") ? "0 -4px 6px -1px rgb(0 0 0 / 0.1)" : "none"
-          }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <div className="absolute inset-0 bg-card/80 opacity-[0.05]"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
-        </motion.div>
-
-        {/* Side Folds (Left and Right folding in) */}
-        <div className="absolute inset-x-0 top-1/3 bottom-1/3 z-30 pointer-events-none overflow-visible">
-          <motion.div
-            className="absolute left-0 top-0 bottom-0 w-1/2 bg-card border border-border/30 rounded-l-sm origin-right shadow-sm"
-            animate={{ rotateY: (phase === "fold-sides" || phase === "seal") ? 179 : 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute right-0 top-0 bottom-0 w-1/2 bg-card border border-border/30 rounded-r-sm origin-left shadow-sm"
-            animate={{ rotateY: (phase === "fold-sides" || phase === "seal") ? -179 : 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-          />
-        </div>
-
-        {/* Wax seal */}
+        {/* Heart Seal */}
         <AnimatePresence>
-          {phase === "seal" && (
+          {phase === "sealed" && (
             <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none"
-              initial={{ scale: 3, opacity: 0, rotate: -45 }}
-              animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 100, damping: 12, delay: 0.4 }}
+              className="absolute z-40 top-16"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.6, type: "spring" }}
             >
-              <div className="relative">
-                <div className="w-14 h-14 rounded-full bg-primary/95 flex items-center justify-center shadow-lg border border-primary-foreground/20">
-                  <Heart className="w-7 h-7 text-white fill-current" />
-                </div>
-                {/* Seal wax drips simplified */}
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-2 bg-primary/90 rounded-full blur-[1px]" />
+              <div className="w-10 h-10 bg-red-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                <Heart className="w-5 h-5 text-white fill-current" />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
       </div>
 
+      {/* Text Status */}
       <motion.p
         key={phase}
-        className="font-typewriter text-base text-muted-foreground/80 mt-4 text-center px-4"
-        initial={{ opacity: 0, y: 5 }}
+        className="mt-8 font-typewriter text-primary/80"
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        exit={{ opacity: 0, y: -10 }}
       >
-        {phaseLabel[phase]}
+        {phase === "folding" && "Folding your words with care..."}
+        {phase === "sliding" && "Tucking them into the envelope..."}
+        {phase === "sealed" && "Sealed with a magical touch ✨"}
       </motion.p>
-
-      <div className="flex gap-1.5 mt-6">
-        {Object.keys(phaseLabel).map((key, i) => (
-          <motion.div
-            key={key}
-            className="h-1 rounded-full bg-primary"
-            animate={{
-              width: phase === key ? 24 : 8,
-              opacity: Object.keys(phaseLabel).indexOf(phase) >= i ? 0.6 : 0.2
-            }}
-            transition={{ duration: 0.3 }}
-          />
-        ))}
-      </div>
     </motion.div>
   );
 };

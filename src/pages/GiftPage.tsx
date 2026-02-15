@@ -49,6 +49,9 @@ const GiftPage = () => {
     // Play unwrap sound
     unwrapSound.play();
 
+    // Start background music immediately
+    backgroundMusic.play();
+
     // Save unwrap status to localStorage
     const storageKey = `heartchain_${encoded}`;
     localStorage.setItem(storageKey, "true");
@@ -147,7 +150,9 @@ const GiftPage = () => {
           <MusicToggle
             isPlaying={backgroundMusic.isPlaying}
             isLoading={backgroundMusic.isLoading}
+            volume={backgroundMusic.volume}
             onToggle={backgroundMusic.toggle}
+            onVolumeChange={backgroundMusic.setVolume}
           />
         </motion.div>
       </header>
