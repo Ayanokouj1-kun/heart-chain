@@ -6,6 +6,7 @@ export interface LetterData {
   to: string;
   from: string;
   message: string;
+  photos?: string[];
   unwrapped?: boolean;
 }
 
