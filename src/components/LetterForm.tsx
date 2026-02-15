@@ -105,7 +105,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
         >
-          <Label htmlFor="to" className="font-body text-sm text-muted-foreground mb-1.5 block italic">
+          <Label htmlFor="to" className="font-body text-base sm:text-lg text-foreground/70 mb-1.5 block italic">
             My Dearest,
           </Label>
           <Input
@@ -208,7 +208,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.35 }}
         >
-          <Label htmlFor="from" className="font-body text-sm text-muted-foreground mb-1.5 block italic">
+          <Label htmlFor="from" className="font-body text-base sm:text-lg text-foreground/70 mb-1.5 block italic">
             Forever yours,
           </Label>
           <Input
