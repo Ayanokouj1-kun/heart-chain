@@ -5,6 +5,7 @@ import LetterForm from "@/components/LetterForm";
 import ShareLink from "@/components/ShareLink";
 import PaperFoldAnimation from "@/components/PaperFoldAnimation";
 import { generateShareLink, LetterData } from "@/lib/letterEncoder";
+import { shortenUrl } from "@/lib/urlShortener";
 
 type Step = "write" | "folding" | "share";
 
@@ -70,11 +71,13 @@ const Index = () => {
   const [shareLink, setShareLink] = useState("");
   const letterRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = (data: { to: string; from: string; message: string; photos?: string[] }) => {
+  const handleSubmit = async (data: { to: string; from: string; message: string; photos?: string[] }) => {
     const letterData: LetterData = { ...data, unwrapped: false };
     const link = generateShareLink(letterData);
-    setShareLink(link);
     setStep("folding");
+    // Shorten URL in background during folding animation
+    const shortLink = await shortenUrl(link);
+    setShareLink(shortLink);
   };
 
   const handleFoldComplete = () => {

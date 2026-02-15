@@ -1,9 +1,18 @@
-// URL shortener - currently returns original URL
-// Note: External URL shorteners require a backend proxy due to CORS
-// Enable Lovable Cloud for truly short database-backed links
+import { supabase } from "@/integrations/supabase/client";
 
 export async function shortenUrl(longUrl: string): Promise<string> {
-  // Return original URL - external shorteners don't support browser CORS
-  // For short links, enable Lovable Cloud to store letters in a database
-  return longUrl;
+  try {
+    const { data, error } = await supabase.functions.invoke('shorten-url', {
+      body: { url: longUrl },
+    });
+
+    if (error) {
+      console.error('Shorten URL error:', error);
+      return longUrl;
+    }
+
+    return data?.short_url || longUrl;
+  } catch {
+    return longUrl;
+  }
 }
