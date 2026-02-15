@@ -188,6 +188,7 @@ const GiftPage = () => {
             to={letterData.to}
             from={letterData.from}
             message={letterData.message}
+            photos={letterData.photos}
           />
         )}
       </main>

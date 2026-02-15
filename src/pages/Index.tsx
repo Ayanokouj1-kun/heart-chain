@@ -43,7 +43,7 @@ const Index = () => {
   const [shareLink, setShareLink] = useState("");
   const letterRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = async (data: { to: string; from: string; message: string }) => {
+  const handleSubmit = async (data: { to: string; from: string; message: string; photos?: string[] }) => {
     const letterData: LetterData = { ...data, unwrapped: false };
     const link = generateShareLink(letterData);
     setStep("shortening");
@@ -121,18 +121,7 @@ const Index = () => {
             transition={{ duration: 0.5 }}
           >
             {(step === "landing" || step === "write") && (
-              <div className="bg-card rounded-[20px] shadow-card p-8 sm:p-12 border border-border">
-                <div className="text-center mb-8">
-                  <Heart className="w-6 h-6 text-primary mx-auto mb-3" fill="currentColor" />
-                  <h2 className="font-display text-4xl sm:text-5xl text-foreground mb-2">
-                    Write Your Letter
-                  </h2>
-                  <p className="font-body text-sm text-muted-foreground">
-                    Pour your heart onto the page
-                  </p>
-                </div>
-                <LetterForm onSubmit={handleSubmit} />
-              </div>
+              <LetterForm onSubmit={handleSubmit} />
             )}
 
             {step === "shortening" && (
