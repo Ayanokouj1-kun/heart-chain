@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import LetterForm from "@/components/LetterForm";
@@ -6,136 +6,179 @@ import ShareLink from "@/components/ShareLink";
 import { generateShareLink, LetterData } from "@/lib/letterEncoder";
 import { shortenUrl } from "@/lib/urlShortener";
 
-type Step = "write" | "share" | "shortening";
+type Step = "landing" | "write" | "share" | "shortening";
+
+const FloatingHearts = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    {[...Array(18)].map((_, i) => (
+      <motion.div
+        key={i}
+        className="absolute text-primary/10"
+        style={{
+          left: `${3 + (i * 5.5) % 92}%`,
+          top: `${5 + (i * 12) % 85}%`,
+          fontSize: `${18 + (i % 5) * 12}px`,
+        }}
+        animate={{
+          y: [0, -30, 0],
+          x: [0, (i % 2 === 0 ? 8 : -8), 0],
+          rotate: [0, 15, -15, 0],
+          opacity: [0.08, 0.15, 0.08],
+        }}
+        transition={{
+          duration: 5 + (i % 4),
+          repeat: Infinity,
+          delay: i * 0.4,
+          ease: "easeInOut",
+        }}
+      >
+        ♥
+      </motion.div>
+    ))}
+  </div>
+);
 
 const Index = () => {
-  const [step, setStep] = useState<Step>("write");
+  const [step, setStep] = useState<Step>("landing");
   const [shareLink, setShareLink] = useState("");
+  const letterRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async (data: { to: string; from: string; message: string }) => {
     const letterData: LetterData = { ...data, unwrapped: false };
     const link = generateShareLink(letterData);
-    
-    // Show loading state while shortening
     setStep("shortening");
-    
-    // Shorten the URL
     const shortLink = await shortenUrl(link);
     setShareLink(shortLink);
     setStep("share");
   };
 
   const handleCreateAnother = () => {
-    setStep("write");
+    setStep("landing");
     setShareLink("");
+  };
+
+  const scrollToLetter = () => {
+    setStep("write");
+    setTimeout(() => {
+      letterRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   return (
     <div className="min-h-screen bg-gradient-blush relative overflow-hidden">
-      {/* Floating hearts background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(12)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-primary/[0.08]"
-            style={{
-              left: `${5 + (i * 8) % 90}%`,
-              top: `${10 + (i * 15) % 80}%`,
-              fontSize: `${30 + (i % 4) * 20}px`,
-            }}
-            animate={{
-              y: [0, -20, 0],
-              rotate: [0, 10, -10, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 4 + (i % 3),
-              repeat: Infinity,
-              delay: i * 0.3,
-              ease: "easeInOut",
-            }}
-          >
-            ♥
-          </motion.div>
-        ))}
-      </div>
+      <FloatingHearts />
 
-      {/* Header */}
-      <header className="relative z-10 py-8">
+      {/* Hero Section */}
+      <section className="relative z-10 min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
         <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="max-w-2xl mx-auto"
         >
           <motion.div
-            className="inline-flex items-center justify-center gap-2 mb-2"
-            whileHover={{ scale: 1.05 }}
+            className="inline-block mb-6"
+            animate={{ scale: [1, 1.15, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <Heart className="w-8 h-8 text-primary animate-heartbeat" fill="currentColor" />
-            <h1 className="font-display text-4xl md:text-5xl text-foreground">
-              HeartChain
-            </h1>
-            <Heart className="w-8 h-8 text-primary animate-heartbeat" fill="currentColor" />
+            <Heart className="w-12 h-12 text-primary mx-auto" fill="currentColor" />
           </motion.div>
-          <p className="font-body text-muted-foreground">
-            Send love, wrapped with care
-          </p>
-        </motion.div>
-      </header>
 
-      {/* Main content */}
-      <main className="relative z-10 container mx-auto px-4 py-8 pb-16">
-        <motion.div
-          key={step}
-          initial={{ opacity: 0, x: step === "write" ? -20 : 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: step === "write" ? 20 : -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          {step === "write" && <LetterForm onSubmit={handleSubmit} />}
-          {step === "shortening" && (
-            <motion.div
-              className="flex flex-col items-center justify-center py-16"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <motion.div
-                className="text-primary mb-4"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-              >
-                <Heart className="w-12 h-12" fill="currentColor" />
-              </motion.div>
-              <p className="text-muted-foreground font-body">Creating your short link...</p>
-            </motion.div>
-          )}
-          {step === "share" && (
-            <ShareLink link={shareLink} onCreateAnother={handleCreateAnother} />
-          )}
+          <h1 className="font-display text-6xl sm:text-7xl md:text-8xl text-foreground mb-4 leading-tight">
+            To My Love
+          </h1>
+
+          <motion.p
+            className="font-body text-lg sm:text-xl text-muted-foreground mb-10 italic"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            Every word is written from the heart.
+          </motion.p>
+
+          <motion.button
+            onClick={scrollToLetter}
+            className="font-body px-10 py-4 rounded-[20px] bg-primary text-primary-foreground text-lg shadow-romantic hover:shadow-glow transition-all duration-300 hover:scale-105"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
+            whileHover={{ scale: 1.07 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            Read My Letter
+          </motion.button>
         </motion.div>
-      </main>
+      </section>
+
+      {/* Letter Section */}
+      <section ref={letterRef} className="relative z-10 py-16 px-4">
+        <div className="max-w-xl mx-auto">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {(step === "landing" || step === "write") && (
+              <div className="bg-card rounded-[20px] shadow-card p-8 sm:p-12 border border-border">
+                <div className="text-center mb-8">
+                  <Heart className="w-6 h-6 text-primary mx-auto mb-3" fill="currentColor" />
+                  <h2 className="font-display text-4xl sm:text-5xl text-foreground mb-2">
+                    Write Your Letter
+                  </h2>
+                  <p className="font-body text-sm text-muted-foreground">
+                    Pour your heart onto the page
+                  </p>
+                </div>
+                <LetterForm onSubmit={handleSubmit} />
+              </div>
+            )}
+
+            {step === "shortening" && (
+              <motion.div
+                className="flex flex-col items-center justify-center py-20 bg-card rounded-[20px] shadow-card border border-border"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <motion.div
+                  className="text-primary mb-5"
+                  animate={{ scale: [1, 1.25, 1] }}
+                  transition={{ duration: 1.2, repeat: Infinity }}
+                >
+                  <Heart className="w-14 h-14" fill="currentColor" />
+                </motion.div>
+                <p className="text-muted-foreground font-body text-lg">
+                  Sealing your letter with love...
+                </p>
+              </motion.div>
+            )}
+
+            {step === "share" && (
+              <ShareLink link={shareLink} onCreateAnother={handleCreateAnother} />
+            )}
+          </motion.div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="relative z-10 py-6 text-center">
-        <p className="text-sm text-muted-foreground font-body">
-          Made with <span className="text-primary">♥</span> for your Valentine
-        </p>
+      <footer className="relative z-10 py-10">
+        <div className="bg-gradient-romantic rounded-t-[20px] max-w-4xl mx-auto px-6 py-8 text-center">
+          <motion.div
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            className="mb-3"
+          >
+            <Heart className="w-5 h-5 text-primary-foreground mx-auto" fill="currentColor" />
+          </motion.div>
+          <p className="font-display text-2xl text-primary-foreground mb-1">
+            HeartChain
+          </p>
+          <p className="font-body text-sm text-primary-foreground/80">
+            Made with love, sealed with care
+          </p>
+        </div>
       </footer>
-
-      {/* Decorative bottom wave */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none">
-        <svg
-          viewBox="0 0 1440 120"
-          className="w-full h-full"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,80 1440,60 L1440,120 L0,120 Z"
-            fill="hsl(var(--primary) / 0.05)"
-          />
-        </svg>
-      </div>
     </div>
   );
 };

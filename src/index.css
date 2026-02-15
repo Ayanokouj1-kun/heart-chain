@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,55 +6,55 @@
 
 @layer base {
   :root {
-    /* Romantic Rose Theme */
-    --background: 30 30% 98%;
-    --foreground: 350 25% 20%;
+    /* Romantic Pastel Theme */
+    --background: 20 100% 97%;
+    --foreground: 340 30% 25%;
 
-    --card: 30 40% 97%;
-    --card-foreground: 350 25% 20%;
+    --card: 20 100% 97%;
+    --card-foreground: 340 30% 25%;
 
-    --popover: 30 40% 97%;
-    --popover-foreground: 350 25% 20%;
+    --popover: 20 100% 97%;
+    --popover-foreground: 340 30% 25%;
 
-    --primary: 350 70% 45%;
-    --primary-foreground: 30 30% 98%;
+    --primary: 340 45% 73%;
+    --primary-foreground: 20 100% 97%;
 
-    --secondary: 350 40% 90%;
-    --secondary-foreground: 350 50% 30%;
+    --secondary: 340 60% 88%;
+    --secondary-foreground: 340 40% 35%;
 
-    --muted: 30 20% 94%;
-    --muted-foreground: 350 15% 50%;
+    --muted: 20 40% 94%;
+    --muted-foreground: 340 15% 50%;
 
-    --accent: 40 60% 55%;
-    --accent-foreground: 350 25% 15%;
+    --accent: 340 45% 73%;
+    --accent-foreground: 20 100% 97%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 350 30% 88%;
-    --input: 350 30% 88%;
-    --ring: 350 70% 45%;
+    --border: 340 40% 88%;
+    --input: 340 40% 88%;
+    --ring: 340 45% 73%;
 
-    --radius: 0.75rem;
+    --radius: 1.25rem;
 
     /* Custom HeartChain tokens */
-    --rose-deep: 350 70% 35%;
-    --rose-light: 350 60% 85%;
-    --blush: 350 50% 92%;
+    --rose-deep: 340 45% 63%;
+    --rose-light: 340 60% 88%;
+    --blush: 340 60% 90%;
     --gold: 40 70% 50%;
     --gold-light: 40 60% 75%;
-    --cream: 35 40% 96%;
-    --burgundy: 350 65% 25%;
+    --cream: 20 100% 97%;
+    --burgundy: 340 50% 35%;
     
     /* Gradients */
-    --gradient-romantic: linear-gradient(135deg, hsl(350 70% 45%), hsl(350 60% 55%), hsl(350 50% 65%));
+    --gradient-romantic: linear-gradient(135deg, hsl(340 60% 88%), hsl(340 45% 73%), hsl(340 40% 68%));
     --gradient-gold: linear-gradient(135deg, hsl(40 70% 50%), hsl(40 60% 60%));
-    --gradient-blush: linear-gradient(180deg, hsl(30 30% 98%), hsl(350 50% 95%));
+    --gradient-blush: linear-gradient(180deg, hsl(20 100% 97%), hsl(340 60% 93%));
     
     /* Shadows */
-    --shadow-romantic: 0 4px 20px -4px hsl(350 70% 45% / 0.25);
-    --shadow-card: 0 8px 30px -8px hsl(350 30% 50% / 0.15);
-    --shadow-glow: 0 0 40px hsl(350 70% 45% / 0.2);
+    --shadow-romantic: 0 8px 32px -8px hsl(340 45% 73% / 0.3);
+    --shadow-card: 0 12px 40px -12px hsl(340 30% 60% / 0.2);
+    --shadow-glow: 0 0 50px hsl(340 45% 73% / 0.25);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -126,21 +126,22 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Lora', serif;
+    font-family: 'Playfair Display', serif;
+    scroll-behavior: smooth;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Great Vibes', cursive;
   }
 }
 
 @layer utilities {
   .font-display {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Great Vibes', cursive;
   }
   
   .font-body {
-    font-family: 'Lora', serif;
+    font-family: 'Playfair Display', serif;
   }
 
   .text-gradient-romantic {
