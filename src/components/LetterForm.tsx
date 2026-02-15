@@ -75,7 +75,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
       transition={{ duration: 0.5 }}
     >
       {/* Letter-style card */}
-      <div className="bg-card rounded-sm p-8 sm:p-10 shadow-card border-2 border-border relative overflow-hidden" style={{ backgroundImage: 'repeating-linear-gradient(transparent, transparent 31px, hsl(30 30% 78% / 0.3) 31px, hsl(30 30% 78% / 0.3) 32px)' }}>
+      <div className="bg-card rounded-sm p-8 sm:p-10 shadow-card border-2 border-border relative overflow-hidden">
         {/* Aged paper texture */}
         <div
           className="absolute inset-0 opacity-[0.08] pointer-events-none"

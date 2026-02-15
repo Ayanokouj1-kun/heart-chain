@@ -6,7 +6,7 @@ import GiftBox from "@/components/GiftBox";
 import RevealedLetter from "@/components/RevealedLetter";
 import Confetti from "@/components/Confetti";
 import MusicToggle from "@/components/MusicToggle";
-import CupidAnimation from "@/components/CupidAnimation";
+import LetterUnfoldAnimation from "@/components/LetterUnfoldAnimation";
 import { Button } from "@/components/ui/button";
 import { decodeLetter, LetterData } from "@/lib/letterEncoder";
 import { useUnwrapSound, useBackgroundMusic } from "@/hooks/useAudio";
@@ -185,8 +185,8 @@ const GiftPage = () => {
 
             <div className="relative w-full max-w-md h-80 mx-auto flex items-center justify-center">
               {isUnwrapping && (
-                <div className="absolute inset-x-0 top-0 z-40">
-                  <CupidAnimation />
+                <div className="absolute inset-0 z-40 flex items-center justify-center">
+                  <LetterUnfoldAnimation onComplete={() => { }} />
                 </div>
               )}
               <div className="w-64 h-72 mx-auto">

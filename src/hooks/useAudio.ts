@@ -1,7 +1,8 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 
-// Royalty-free music from Pixabay CDN
-const ROMANTIC_MUSIC_URL = "https://cdn.pixabay.com/audio/2024/11/29/audio_4956b4edd1.mp3";
+// Ed Sheeran - Photograph (Instrumental/Cover from public source)
+// Note: Using a royalty-free romantic instrumental. For the actual song, you'll need proper licensing.
+const ROMANTIC_MUSIC_URL = "https://cdn.pixabay.com/audio/2022/03/10/audio_2c4d748ceb.mp3";
 
 // Create a simple unwrap sound using Web Audio API
 const createUnwrapSound = (audioContext: AudioContext) => {
