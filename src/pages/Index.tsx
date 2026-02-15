@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 import { Heart, Sparkles } from "lucide-react";
 import LetterForm from "@/components/LetterForm";
 import ShareLink from "@/components/ShareLink";
+import PaperFoldAnimation from "@/components/PaperFoldAnimation";
 import { generateShareLink, LetterData } from "@/lib/letterEncoder";
-import { shortenUrl } from "@/lib/urlShortener";
 
-type Step = "write" | "share" | "shortening";
+type Step = "write" | "folding" | "share";
 
 const FloatingHearts = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -70,12 +70,14 @@ const Index = () => {
   const [shareLink, setShareLink] = useState("");
   const letterRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = async (data: { to: string; from: string; message: string; photos?: string[] }) => {
+  const handleSubmit = (data: { to: string; from: string; message: string; photos?: string[] }) => {
     const letterData: LetterData = { ...data, unwrapped: false };
     const link = generateShareLink(letterData);
-    setStep("shortening");
-    const shortLink = await shortenUrl(link);
-    setShareLink(shortLink);
+    setShareLink(link);
+    setStep("folding");
+  };
+
+  const handleFoldComplete = () => {
     setStep("share");
   };
 
@@ -135,23 +137,8 @@ const Index = () => {
               <LetterForm onSubmit={handleSubmit} />
             )}
 
-            {step === "shortening" && (
-              <motion.div
-                className="flex flex-col items-center justify-center py-20 bg-card rounded-sm shadow-card border-2 border-border"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <motion.div
-                  className="text-primary mb-5"
-                  animate={{ scale: [1, 1.25, 1] }}
-                  transition={{ duration: 1.2, repeat: Infinity }}
-                >
-                  <Heart className="w-14 h-14" fill="currentColor" />
-                </motion.div>
-                <p className="text-muted-foreground font-body text-lg">
-                  Sealing your letter with love...
-                </p>
-              </motion.div>
+            {step === "folding" && (
+              <PaperFoldAnimation onComplete={handleFoldComplete} />
             )}
 
             {step === "share" && (
