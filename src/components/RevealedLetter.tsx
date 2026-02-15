@@ -51,18 +51,20 @@ const RevealedLetter = ({ to, from, message, photos }: RevealedLetterProps) => {
         </div>
 
         {/* Letter card */}
-        <div className="bg-card rounded-[20px] p-8 sm:p-10 shadow-card border border-border/50 relative overflow-hidden">
-          {/* Paper texture overlay */}
+        <div className="bg-card rounded-sm p-8 sm:p-10 shadow-card border-2 border-border relative overflow-hidden" style={{ backgroundImage: 'repeating-linear-gradient(transparent, transparent 31px, hsl(30 30% 78% / 0.3) 31px, hsl(30 30% 78% / 0.3) 32px)' }}>
+          {/* Aged paper texture */}
           <div
-            className="absolute inset-0 opacity-[0.03] pointer-events-none"
+            className="absolute inset-0 opacity-[0.08] pointer-events-none"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
             }}
           />
+          {/* Vintage edge stain */}
+          <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 60px hsl(30 40% 60% / 0.2)' }} />
 
-          {/* Corner flourishes */}
-          <div className="absolute top-3 left-4 text-primary/20 text-xl">❦</div>
-          <div className="absolute top-3 right-4 text-primary/20 text-xl rotate-180">❦</div>
+          {/* Corner ornaments */}
+          <div className="absolute top-2 left-3 text-primary/30 text-lg">✦</div>
+          <div className="absolute top-2 right-3 text-primary/30 text-lg">✦</div>
 
           {/* Heart envelope header */}
           <motion.div
@@ -171,9 +173,9 @@ const RevealedLetter = ({ to, from, message, photos }: RevealedLetterProps) => {
             </p>
           </motion.div>
 
-          {/* Bottom flourishes */}
-          <div className="absolute bottom-3 left-4 text-primary/20 text-xl rotate-180">❦</div>
-          <div className="absolute bottom-3 right-4 text-primary/20 text-xl">❦</div>
+          {/* Bottom ornaments */}
+          <div className="absolute bottom-2 left-3 text-primary/30 text-lg">✦</div>
+          <div className="absolute bottom-2 right-3 text-primary/30 text-lg">✦</div>
         </div>
       </div>
 
