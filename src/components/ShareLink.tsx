@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, Copy, Heart, Link2 } from "lucide-react";
+import { Check, Copy, Heart, Link2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import HeartEnvelope from "./HeartEnvelope";
 
@@ -100,11 +100,21 @@ const ShareLink = ({ link, onCreateAnother }: ShareLinkProps) => {
           </Button>
 
           <Button
+            onClick={() => window.open(link, "_blank")}
+            variant="outline"
+            size="lg"
+            className="w-full"
+          >
+            <Heart className="w-4 h-4 mr-2" />
+            Check the Opening Gift
+          </Button>
+
+          <Button
             onClick={onCreateAnother}
             variant="ghost"
             className="w-full"
           >
-            <Heart className="w-4 h-4 mr-2" />
+            <Sparkles className="w-4 h-4 mr-2" />
             Create Another Letter
           </Button>
         </motion.div>

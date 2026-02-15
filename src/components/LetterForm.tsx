@@ -92,7 +92,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
 
         {/* Date */}
         <motion.p
-          className="font-body text-xs text-muted-foreground text-right mb-6 italic"
+          className="font-typewriter text-[10px] text-muted-foreground text-right mb-6 opacity-70"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
@@ -107,7 +107,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
         >
-          <Label htmlFor="to" className="font-body text-base sm:text-lg text-foreground/70 mb-1.5 block italic">
+          <Label htmlFor="to" className="font-typewriter text-xs text-foreground/70 mb-1.5 block uppercase tracking-widest">
             My Dearest,
           </Label>
           <Input
@@ -116,7 +116,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
             placeholder="the one who holds my heart..."
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="bg-transparent border-0 border-b border-border rounded-none px-0 font-display text-3xl sm:text-4xl text-primary focus:text-primary placeholder:text-muted-foreground/40 placeholder:font-body placeholder:text-base focus-visible:ring-0 focus-visible:border-primary transition-colors"
+            className="bg-transparent border-0 border-b border-border rounded-none px-0 font-typewriter text-2xl sm:text-3xl text-primary focus:text-primary placeholder:text-muted-foreground/40 placeholder:font-typewriter placeholder:text-base focus-visible:ring-0 focus-visible:border-primary transition-colors"
             maxLength={50}
           />
         </motion.div>
@@ -140,10 +140,10 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
             placeholder="I have been wanting to tell you something for the longest time. Every moment with you feels like a dream I never want to wake from. Your smile lights up even my darkest days, and your laughter is the sweetest melody I have ever heard..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="bg-transparent border-0 rounded-none px-0 font-body text-foreground text-base leading-relaxed placeholder:text-muted-foreground/35 placeholder:leading-relaxed focus-visible:ring-0 transition-colors min-h-[180px] resize-none text-justify"
+            className="bg-transparent border-0 rounded-none px-0 font-typewriter text-foreground text-sm leading-relaxed placeholder:text-muted-foreground/35 placeholder:leading-relaxed focus-visible:ring-0 transition-colors min-h-[180px] resize-none text-justify"
             maxLength={1000}
           />
-          <p className="text-xs text-muted-foreground/60 mt-1 text-right font-body">
+          <p className="text-xs text-muted-foreground/60 mt-1 text-right font-typewriter">
             {message.length}/1000
           </p>
         </motion.div>
@@ -164,7 +164,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
                 <img
                   src={photo}
                   alt={`Memory ${i + 1}`}
-                  className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-xl border-2 border-border/60 shadow-sm"
+                  className="max-w-[110px] max-h-[110px] w-auto h-auto rounded-sm border border-border/60 shadow-sm"
                 />
                 <button
                   type="button"
@@ -210,7 +210,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.35 }}
         >
-          <Label htmlFor="from" className="font-body text-base sm:text-lg text-foreground/70 mb-1.5 block italic">
+          <Label htmlFor="from" className="font-typewriter text-xs text-foreground/70 mb-1.5 block uppercase tracking-widest">
             Forever yours,
           </Label>
           <Input
@@ -219,7 +219,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
             placeholder="your secret admirer"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="bg-transparent border-0 border-b border-border rounded-none px-0 font-display text-3xl sm:text-4xl text-primary focus:text-primary text-right placeholder:text-muted-foreground/40 placeholder:font-body placeholder:text-base focus-visible:ring-0 focus-visible:border-primary transition-colors"
+            className="bg-transparent border-0 border-b border-border rounded-none px-0 font-typewriter text-2xl sm:text-3xl text-primary focus:text-primary text-right placeholder:text-muted-foreground/40 placeholder:font-typewriter placeholder:text-base focus-visible:ring-0 focus-visible:border-primary transition-colors"
             maxLength={50}
           />
         </motion.div>

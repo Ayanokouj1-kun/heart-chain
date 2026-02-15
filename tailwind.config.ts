@@ -78,6 +78,7 @@ export default {
       fontFamily: {
         display: ["Great Vibes", "cursive"],
         body: ["Playfair Display", "serif"],
+        typewriter: ["Special Elite", "serif"],
       },
       keyframes: {
         "accordion-down": {

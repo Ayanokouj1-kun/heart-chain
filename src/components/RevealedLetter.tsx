@@ -78,7 +78,7 @@ const RevealedLetter = ({ to, from, message, photos }: RevealedLetterProps) => {
 
           {/* Date */}
           <motion.p
-            className="font-body text-xs text-muted-foreground text-right mb-4 italic"
+            className="font-typewriter text-[10px] text-muted-foreground text-right mb-4 opacity-70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.25 }}
@@ -93,8 +93,8 @@ const RevealedLetter = ({ to, from, message, photos }: RevealedLetterProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <span className="font-body text-sm text-muted-foreground italic">My Dearest,</span>
-            <h2 className="font-display text-3xl sm:text-4xl text-foreground mt-1 text-gradient-romantic">
+            <span className="font-typewriter text-xs text-muted-foreground uppercase tracking-widest">My Dearest,</span>
+            <h2 className="font-typewriter text-2xl sm:text-3xl text-foreground mt-1">
               {to}
             </h2>
           </motion.div>
@@ -118,7 +118,7 @@ const RevealedLetter = ({ to, from, message, photos }: RevealedLetterProps) => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <p className="font-body text-foreground leading-[1.9] whitespace-pre-wrap text-justify text-base">
+            <p className="font-typewriter text-foreground leading-[1.7] whitespace-pre-wrap text-justify text-sm sm:text-base">
               {message}
             </p>
           </motion.div>
@@ -141,7 +141,7 @@ const RevealedLetter = ({ to, from, message, photos }: RevealedLetterProps) => {
                   <img
                     src={photo}
                     alt={`Memory ${i + 1}`}
-                    className="w-32 h-32 sm:w-36 sm:h-36 object-cover rounded-xl border-2 border-border shadow-card"
+                    className="max-w-[180px] max-h-[180px] w-auto h-auto rounded-sm border border-border/40 shadow-md"
                   />
                 </motion.div>
               ))}
@@ -167,8 +167,8 @@ const RevealedLetter = ({ to, from, message, photos }: RevealedLetterProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.65 }}
           >
-            <span className="font-body text-sm text-muted-foreground italic">Forever yours,</span>
-            <p className="font-display text-2xl sm:text-3xl text-foreground mt-1">
+            <span className="font-typewriter text-xs text-muted-foreground uppercase tracking-widest">Forever yours,</span>
+            <p className="font-typewriter text-xl sm:text-2xl text-foreground mt-1">
               {from}
             </p>
           </motion.div>

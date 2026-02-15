@@ -6,6 +6,7 @@ import GiftBox from "@/components/GiftBox";
 import RevealedLetter from "@/components/RevealedLetter";
 import Confetti from "@/components/Confetti";
 import MusicToggle from "@/components/MusicToggle";
+import CupidAnimation from "@/components/CupidAnimation";
 import { Button } from "@/components/ui/button";
 import { decodeLetter, LetterData } from "@/lib/letterEncoder";
 import { useUnwrapSound, useBackgroundMusic } from "@/hooks/useAudio";
@@ -15,9 +16,10 @@ const GiftPage = () => {
   const [letterData, setLetterData] = useState<LetterData | null>(null);
   const [isUnwrapped, setIsUnwrapped] = useState(false);
   const [isUnwrapping, setIsUnwrapping] = useState(false);
+  const [isImpacted, setIsImpacted] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [error, setError] = useState(false);
-  
+
   const unwrapSound = useUnwrapSound();
   const backgroundMusic = useBackgroundMusic();
 
@@ -43,7 +45,7 @@ const GiftPage = () => {
 
     setIsUnwrapping(true);
     setShowConfetti(true);
-    
+
     // Play unwrap sound
     unwrapSound.play();
 
@@ -51,10 +53,15 @@ const GiftPage = () => {
     const storageKey = `heartchain_${encoded}`;
     localStorage.setItem(storageKey, "true");
 
+    // Impact happens around 6.5s
+    setTimeout(() => {
+      setIsImpacted(true);
+    }, 6500);
+
     setTimeout(() => {
       setIsUnwrapped(true);
       setIsUnwrapping(false);
-    }, 700);
+    }, 7200);
   };
 
   if (error) {
@@ -176,11 +183,19 @@ const GiftPage = () => {
               Someone special sent you a love letter ♥
             </motion.p>
 
-            <div className="w-64 h-72 mx-auto">
-              <GiftBox
-                isUnwrapping={isUnwrapping}
-                onUnwrap={handleUnwrap}
-              />
+            <div className="relative w-full max-w-md h-80 mx-auto flex items-center justify-center">
+              {isUnwrapping && (
+                <div className="absolute inset-x-0 top-0 z-40">
+                  <CupidAnimation />
+                </div>
+              )}
+              <div className="w-64 h-72 mx-auto">
+                <GiftBox
+                  isUnwrapping={isImpacted}
+                  onUnwrap={handleUnwrap}
+                  className={isUnwrapping && !isImpacted ? "animate-pulse" : ""}
+                />
+              </div>
             </div>
           </motion.div>
         ) : (

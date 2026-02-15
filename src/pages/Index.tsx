@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Heart, Sparkles } from "lucide-react";
 import LetterForm from "@/components/LetterForm";
@@ -74,15 +74,17 @@ const Index = () => {
   const handleSubmit = async (data: { to: string; from: string; message: string; photos?: string[] }) => {
     const letterData: LetterData = { ...data, unwrapped: false };
     const link = generateShareLink(letterData);
+    setShareLink(link);
     setStep("folding");
-    // Shorten URL in background during folding animation
+
+    // Shorten URL in background
     const shortLink = await shortenUrl(link);
     setShareLink(shortLink);
   };
 
-  const handleFoldComplete = () => {
+  const handleFoldComplete = useCallback(() => {
     setStep("share");
-  };
+  }, []);
 
   const handleCreateAnother = () => {
     setStep("write");
