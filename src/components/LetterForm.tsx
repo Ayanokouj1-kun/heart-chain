@@ -114,7 +114,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
             placeholder="the one who holds my heart..."
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="bg-transparent border-0 border-b border-border rounded-none px-0 font-display text-2xl text-foreground placeholder:text-muted-foreground/40 placeholder:font-body placeholder:text-base focus-visible:ring-0 focus-visible:border-primary transition-colors"
+            className="bg-transparent border-0 border-b border-border rounded-none px-0 font-display text-3xl sm:text-4xl text-primary focus:text-primary placeholder:text-muted-foreground/40 placeholder:font-body placeholder:text-base focus-visible:ring-0 focus-visible:border-primary transition-colors"
             maxLength={50}
           />
         </motion.div>
@@ -217,7 +217,7 @@ const LetterForm = ({ onSubmit }: LetterFormProps) => {
             placeholder="your secret admirer"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="bg-transparent border-0 border-b border-border rounded-none px-0 font-display text-2xl text-foreground text-right placeholder:text-muted-foreground/40 placeholder:font-body placeholder:text-base focus-visible:ring-0 focus-visible:border-primary transition-colors"
+            className="bg-transparent border-0 border-b border-border rounded-none px-0 font-display text-3xl sm:text-4xl text-primary focus:text-primary text-right placeholder:text-muted-foreground/40 placeholder:font-body placeholder:text-base focus-visible:ring-0 focus-visible:border-primary transition-colors"
             maxLength={50}
           />
         </motion.div>
