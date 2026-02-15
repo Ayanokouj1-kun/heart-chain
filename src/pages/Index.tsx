@@ -1,12 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 import LetterForm from "@/components/LetterForm";
 import ShareLink from "@/components/ShareLink";
 import { generateShareLink, LetterData } from "@/lib/letterEncoder";
 import { shortenUrl } from "@/lib/urlShortener";
 
-type Step = "landing" | "write" | "share" | "shortening";
+type Step = "write" | "share" | "shortening";
 
 const FloatingHearts = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -38,8 +38,35 @@ const FloatingHearts = () => (
   </div>
 );
 
+/* Pink glow that follows the cursor */
+const CursorGlow = () => {
+  const [pos, setPos] = useState({ x: -100, y: -100 });
+
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      setPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, []);
+
+  return (
+    <div
+      className="pointer-events-none fixed z-50 rounded-full"
+      style={{
+        left: pos.x - 100,
+        top: pos.y - 100,
+        width: 200,
+        height: 200,
+        background: "radial-gradient(circle, hsl(350 60% 65% / 0.18) 0%, transparent 70%)",
+        transition: "left 0.08s ease-out, top 0.08s ease-out",
+      }}
+    />
+  );
+};
+
 const Index = () => {
-  const [step, setStep] = useState<Step>("landing");
+  const [step, setStep] = useState<Step>("write");
   const [shareLink, setShareLink] = useState("");
   const letterRef = useRef<HTMLDivElement>(null);
 
@@ -53,66 +80,50 @@ const Index = () => {
   };
 
   const handleCreateAnother = () => {
-    setStep("landing");
-    setShareLink("");
-  };
-
-  const scrollToLetter = () => {
     setStep("write");
-    setTimeout(() => {
-      letterRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    setShareLink("");
   };
 
   return (
     <div className="min-h-screen bg-gradient-blush relative overflow-hidden">
       <FloatingHearts />
+      <CursorGlow />
 
-      {/* Hero Section */}
-      <section className="relative z-10 min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
+      {/* Cute Header */}
+      <header className="relative z-10 pt-10 pb-6 px-4 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-2xl mx-auto"
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="max-w-xl mx-auto"
         >
           <motion.div
-            className="inline-block mb-6"
-            animate={{ scale: [1, 1.15, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="inline-flex items-center gap-2 mb-3"
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            <Heart className="w-12 h-12 text-primary mx-auto" fill="currentColor" />
+            <Sparkles className="w-5 h-5 text-accent" />
+            <Heart className="w-8 h-8 text-primary" fill="currentColor" />
+            <Sparkles className="w-5 h-5 text-accent" />
           </motion.div>
 
-          <h1 className="font-display text-6xl sm:text-7xl md:text-8xl text-foreground mb-4 leading-tight">
-            To My Love
+          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl text-foreground mb-2 leading-tight">
+            Create a Letter
           </h1>
 
           <motion.p
-            className="font-body text-lg sm:text-xl text-muted-foreground mb-10 italic"
+            className="font-body text-base sm:text-lg text-muted-foreground italic"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
           >
-            Every word is written from the heart.
+            Write from the heart, seal it with love ♥
           </motion.p>
-
-          <motion.button
-            onClick={scrollToLetter}
-            className="font-body px-10 py-4 rounded-[20px] bg-primary text-primary-foreground text-lg shadow-romantic hover:shadow-glow transition-all duration-300 hover:scale-105"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
-            whileHover={{ scale: 1.07 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Read My Letter
-          </motion.button>
         </motion.div>
-      </section>
+      </header>
 
       {/* Letter Section */}
-      <section ref={letterRef} className="relative z-10 py-16 px-4">
+      <section ref={letterRef} className="relative z-10 pb-16 px-4">
         <div className="max-w-xl mx-auto">
           <motion.div
             key={step}
@@ -120,13 +131,13 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {(step === "landing" || step === "write") && (
+            {step === "write" && (
               <LetterForm onSubmit={handleSubmit} />
             )}
 
             {step === "shortening" && (
               <motion.div
-                className="flex flex-col items-center justify-center py-20 bg-card rounded-[20px] shadow-card border border-border"
+                className="flex flex-col items-center justify-center py-20 bg-card rounded-sm shadow-card border-2 border-border"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
